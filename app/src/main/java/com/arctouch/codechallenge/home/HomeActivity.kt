@@ -5,12 +5,15 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.arctouch.codechallenge.R
+import com.arctouch.codechallenge.home.listener.InfinityRecyclerOnScrollListener
 import kotlinx.android.synthetic.main.home_activity.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeActivity : AppCompatActivity() {
 
     private val homeActivityViewModel: HomeActivityViewModel by viewModel()
+
+    private val homeAdapter = HomeAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +26,14 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupViews() {
 
+        recyclerView.adapter = homeAdapter
+
+        recyclerView.addOnScrollListener(object : InfinityRecyclerOnScrollListener() {
+            override fun onLoadMore() {
+                progressBarInfinityScroll.visibility = View.VISIBLE
+                homeActivityViewModel.getMovies()
+            }
+        })
     }
 
     private fun setupObservers() {
@@ -32,8 +43,9 @@ class HomeActivity : AppCompatActivity() {
         })
 
         homeActivityViewModel.listOfMovies().observe(this, Observer {
-            recyclerView.adapter = HomeAdapter(it)
+            homeAdapter.addMoreMovies(it)
             progressBar.visibility = View.GONE
+            progressBarInfinityScroll.visibility = View.GONE
         })
     }
 }

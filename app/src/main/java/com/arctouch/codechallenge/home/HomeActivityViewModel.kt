@@ -21,6 +21,8 @@ class HomeActivityViewModel constructor(
     private val genresLoaded = MutableLiveData<Boolean>()
     fun genresLoaded(): LiveData<Boolean> = genresLoaded
 
+    var currentPage = 1
+
     fun getGenres() {
 
         genresInteractor.execute()
@@ -34,11 +36,13 @@ class HomeActivityViewModel constructor(
 
     fun getMovies() {
 
-        moviesInteractor.execute()
+        moviesInteractor.execute(currentPage)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { result ->
                 movies.value = result
             }
+
+        currentPage++
     }
 }
