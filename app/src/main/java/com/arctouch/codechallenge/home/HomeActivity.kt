@@ -18,7 +18,7 @@ class HomeActivity : BaseActivity() {
 
         setupViews()
         setupObservers()
-        homeActivityViewModel.getMovies()
+        homeActivityViewModel.getGenres()
     }
 
     private fun setupViews() {
@@ -26,6 +26,10 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setupObservers() {
+
+        homeActivityViewModel.genresLoaded().observe(this, Observer {
+            homeActivityViewModel.getMovies()
+        })
 
         homeActivityViewModel.listOfMovies().observe(this, Observer {
             recyclerView.adapter = HomeAdapter(it)
